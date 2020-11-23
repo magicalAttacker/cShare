@@ -164,12 +164,16 @@ void Menu() {
             printf("请输入要创建元素的个数: ");
             scanf("%d", &temp);
             CreateListH(&L, temp);
+            printf("现在的链表元素:\n");
+            DispList(&L);
             break;
         case 2:
             InitList(&L);
             printf("请输入要创建元素的个数: ");
             scanf("%d", &temp);
             CreateListL(&L, temp);
+            printf("现在的链表元素:\n");
+            DispList(&L);
             break;
         case 3:
             printf("链表长度为: %d\n", LengthList(&L));
@@ -190,11 +194,15 @@ void Menu() {
             printf("请输入要插入的元素: ");
             scanf("%d", &temp);
             InsList(&L, locate, temp);
+            printf("现在的链表元素:\n");
+            DispList(&L);
             break;
         case 7:
             printf("请输入要删除的位置: ");
             scanf("%d", &locate);
             DelList(&L, locate);
+            printf("现在的链表元素:\n");
+            DispList(&L);
             break;
         case 8:
             DispList(&L);
