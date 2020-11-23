@@ -4,4 +4,4 @@
 只是一个小白关于数据结构学习的项目
 ## 这是链表作业
 当然，白嫖也是允许的，欢迎来fork
-[链表的作业](cShare/blob/main/LinkListDemo)
+[链表的作业](/blob/main/LinkListDemo)
