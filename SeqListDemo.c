@@ -165,10 +165,10 @@ void Menu() {
 }
 
 void Stop() {
+    int flag;
     printf("\n0.退出");
     printf("\n1.继续");
     printf("\n是否继续:");
-    int flag;
     scanf("%d", &flag);
     if (flag) {
         Menu();
