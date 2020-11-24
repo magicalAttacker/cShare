@@ -91,14 +91,14 @@ void DispList(SeqList *L) {
 }
 
 void MenuLayout() {
+	system("cls");
     printf("顺序表的各种操作\n");
-    printf("1.建立顺序表\n");
-    printf("2.插入元素\n");
-    printf("3.删除元素\n");
-    printf("4.按位置查找元素\n");
-    printf("5.按元素值查找元素\n");
-    printf("6.求顺序表的长度\n");
-    printf("请输入选项: ");
+    printf("||          1.建立顺序表              ||\n");
+    printf("||          2.插入元素                ||\n");
+    printf("||          3.删除元素                ||\n");
+    printf("||          4.按位置查找元素          ||\n");
+    printf("||          5.按元素值查找元素        ||\n");
+    printf("||          6.求顺序表的长度          ||\n");
 }
 
 void Menu() {
