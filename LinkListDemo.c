@@ -112,8 +112,8 @@ void InsList(LinkList *head, int i, DataType x) {
 void DelList(LinkList *head, int i) {
     int j = 0;
     DataType x;
-    InitList(&Deleted);
     LinkList *p = head, * s;
+    InitList(&Deleted);
     while (p->next != NULL && j < i-1) {
         p = p->next;
         j++;
@@ -141,22 +141,23 @@ void DispList(LinkList *head) {
 }
 
 void MenuLayout() {
-    printf("链表的各种操作\n");
-    printf("1.头插法建立链表\n");
-    printf("2.尾插法建立链表\n");
-    printf("3.求链表长度函数\n");
-    printf("4.按值查找\n");
-    printf("5.按序号查找\n");
-    printf("6.插入操作\n");
-    printf("7.删除操作\n");
-    printf("8.输出全部\n");
-    printf("9.输出历史上被删除的元素\n");
+	system("cls");
+    printf("        链表的各种操作\n");
+    printf("||     1.头插法建立链表           ||\n");
+    printf("||     2.尾插法建立链表           ||\n");
+    printf("||     3.求链表长度函数           ||\n");
+    printf("||     4.按值查找                 ||\n");
+    printf("||     5.按序号查找               ||\n");
+    printf("||     6.插入操作                 ||\n");
+    printf("||     7.删除操作                 ||\n");
+    printf("||     8.输出全部                 ||\n");
+    printf("||     9.输出历史上被删除的元素   ||\n");
     printf("请输入选项: ");
 }
 
 void Menu() {
-    MenuLayout();
     int select, flag, temp, locate;
+    MenuLayout();
     scanf("%d", &select);
     switch (select) {
         case 1:
