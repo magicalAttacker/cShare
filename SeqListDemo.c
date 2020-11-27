@@ -147,7 +147,7 @@ void Menu() {
                 printf("输入的位置错误!");
             break;
         case 5:
-            printf("请输入要插入的元素值为: ");
+            printf("请输入要查找的元素值为: ");
             scanf("%d", &x);
             loc = Locate(&L, x);
             if (loc)
