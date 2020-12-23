@@ -2,6 +2,7 @@
 #include <string.h>
 #define MAX 100
 #define STRLEN 9
+#define M 32767
 int visited[MAX];
 typedef char str[STRLEN];
 typedef struct {
@@ -23,7 +24,7 @@ void CreateMGraph(MGraph *G) {
         }
         for (i = 0; i < G->n; i++)
             for (j = 0; j < G->n; j++)
-                G->edges[i][j] = 0;
+                G->edges[i][j] = M;
         for (k = 0; k < G->e; k++) {
             fscanf(fp, "%s %s %d", str1, str2, &w);
             for (i = 0; i < G->n; i++)
@@ -43,7 +44,7 @@ void DispMGraph(MGraph G) {
     printf("\n 图的邻接矩阵： \n");
     for (i = 0; i < G.n; i++) {
         for (j = 0; j <G.n; j++) {
-            if (G.edges[i][j] == 0) {
+            if (G.edges[i][j] == M) {
                 printf("\t∞");
             }
             else {
@@ -58,7 +59,7 @@ void DFS_Core(MGraph *G, int i) {
     printf("-->%s", G->vexs[i]);
     visited[i] = 1;
     for (j = 0; j < G->n; j++) {
-        if (G->edges[i][j] != 0 && !visited[j]) {
+        if (G->edges[i][j] != 0 && G->edges[i][j] != M && !visited[j]) {
             DFS_Core(G, j);
         }
     }
@@ -80,16 +81,132 @@ void DFS(MGraph *G, str vexs) {
         }
     }
 }
+void Prim(MGraph *G) {
+    int i, j, k, min, lowcost[MAX], closest[MAX];
+    for (i = 1; i < G->n; i++) {
+        lowcost[i] = G->edges[0][i];
+        closest[i] = 0;
+    }
+    closest[0] = -1;
+    for (i = 1; i < G->n; i++) {
+        min = M;
+        k = i;
+        for (j = 0; j < G->n; j++) {
+            if (lowcost[j] < min && closest[j] != -1) {
+                min = lowcost[j];
+                k = j;
+            }
+        }
+        printf("%s-->%s 权值%d\n", G->vexs[closest[k]], G->vexs[k], lowcost[k]);
+        closest[k] = -1;
+        for (j = 1; j < G->n; j++) {
+            if (closest[j] != -1  && G->edges[k][j] < lowcost[j]) {
+                lowcost[j] = G->edges[k][j];
+                closest[j] = k;
+            }
+        }
+    }
+}
+void Dijkstra(MGraph *G, int v) {
+    int dist[MAX], path[MAX], s[MAX];
+    int mindis, i, j, u, pre;
+    for (i = 0; i < G->n; i++) {
+        dist[i] = G->edges[v][i];
+        s[i] = 0;
+        if (G->edges[v][i] < M)
+            path[i] = v;
+        else
+            path[i] = -1;
+    }
+    s[v] = 1;
+    path[v] = 0;
+    for (i = 0; i < G->n; i++) {
+        mindis = M;
+        u = -1;
+        for (int j = 0; j < G->n; j++) {
+            if (s[j] == 0 && dist[j] < mindis) {
+                u = j;
+                mindis = dist[j];
+            }
+        }
+        if (u != -1) {
+            s[u] = 1;
+            for (j = 0; j < G->n; j++) {
+                if (G->edges[u][j] < M && dist[u] + G->edges[u][j] < dist[j]) {
+                    dist[j] = dist[u] + G->edges[u][j];
+                    path[j] = u;
+                }
+            }
+        }
+    }
+    printf("\nDijkstra算法求解如下：");
+    for (i = 0; i < G->n; i++) {
+        if (i != v) {
+            printf("\n%d->%d:", v, i);
+            if (s[i] == 1) {
+                printf("路径长度为%2d，", dist[i]);
+                pre = i;
+                printf("路径逆序为：");
+                while (pre != v) {
+                    printf("%d，", pre);
+                    pre = path[pre];
+                }
+                printf("%d", pre);
+            } else
+                printf("不存在路径");
+        }
+    }
+}
+void Floyd_Core(MGraph *G, int start, int end) {
+    int i, j, k;
+    int dist[MAX][MAX], path[MAX][MAX];
+    for (i = 0; i < G->n; i++) {
+        for (j = 0; j < G->n; j++) {
+            dist[i][j] = G->edges[i][j];
+            path[i][j] = -1;
+        }
+    }
+    for (k = 0; k < G->n; k++) {
+        for (i = 0; i < G->n; i++) {
+            for (j = 0; j < G->n; j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    path[i][j] = k;
+                }
+            }
+        }
+    }
+    for (i = 0; i < G->n; i++) {
+        for (j = 0; j < G->n; j++)
+            printf("-->%s", G->vexs[dist[i][j]]);
+        printf("\n");
+    }
+}
+void Floyd(MGraph *G) {
+    int i, start, end;
+    str str1, str2;
+    printf("请输入开始城市和终止城市：");
+    scanf("%s %s", str1, str2);
+    for (i = 0; i < G->n; i++) {
+        if (strcmp(str1, G->vexs[i]) == 0) {
+            start = i;
+        }
+        if (strcmp(str2, G->vexs[i]) == 0) {
+            end = i;
+        }
+    }
+    Floyd_Core(&G, start, end);
+}
 void Menu() {
     printf("\n------------------------简易城市交通网--------------------------");
     printf("\n||                    1.读取交通信息网                        ||");
-    printf("\n||                    1.读取交通信息网                        ||");
-    printf("\n||                    1.读取交通信息网                        ||");
+    printf("\n||                    2.城市网信息维护                        ||");
+    printf("\n||                    3.连通网信息维护                        ||");
     printf("\n||                    4.遍历交通信息网                        ||");
-    printf("\n||                    1.读取交通信息网                        ||");
-    printf("\n||                    1.读取交通信息网                        ||");
-    printf("\n||                    1.读取交通信息网                        ||");
-    printf("\n||                    1.读取交通信息网                        ||");
+    printf("\n||                    5.路线最小生成树                        ||");
+    printf("\n||                    6.两城间最短路径                        ||");
+    printf("\n||                    7.源点找最短路径                        ||");
+    printf("\n||                    0.退出信息网系统                        ||");
     printf("\n--------------------------------------------------------------");
     printf("\n请输入选项：");
 }
@@ -125,12 +242,16 @@ void main() {
                 break;
             }
             case 5: {
+                printf("Prim大法好!\n");
+                Prim(&G);
                 break;
             }
             case 6: {
+                Floyd(&G);
                 break;
             }
             case 7: {
+                Dijkstra(&G, 0);
                 break;
             }
             case 0: {
