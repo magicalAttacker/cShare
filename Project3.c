@@ -81,6 +81,61 @@ void DFS(MGraph *G, str vexs) {
         }
     }
 }
+typedef struct {
+    int data[MAX];
+    int front;
+    int rear;
+} Queue;
+int InitQueue(Queue *Q) {
+    Q->front = 0;
+    Q->rear = 0;
+    return 1;
+}
+int QueueEmpty(Queue Q) {
+    if (Q.front == Q.rear)
+        return 1;
+    else
+        return 0;
+}
+int EnQueue(Queue * Q, int e) {
+    if ((Q->rear + 1) % MAX == Q->front)
+        return 0;
+    Q->data[Q->rear] = e;
+    Q->rear = (Q->rear + 1) % MAX;
+    return 1;
+}
+int DeQueue(Queue * Q, int *e) {
+    if (Q->front == Q->rear)
+        return 0;
+    *e = Q->data[Q->front];
+    Q->front = (Q->front+1) % MAX;
+    return 1;
+}
+void BFS(MGraph *G) {
+    int i,j;
+    Queue Q;
+    for (i = 0; i < G->n; i++) {
+        visited[i] = 0;
+    }
+    InitQueue(&Q);
+    for (i = 0; i < G->n; i++) {
+        if (!visited[i]) {
+            visited[i] = 1;
+            printf("-->%s", G->vexs[i]);
+            EnQueue(&Q, i);
+            while (!QueueEmpty(Q)) {
+                DeQueue(&Q, &i);
+                for (j = 0; j < G->n; j++) {
+                    if (G->edges[i][j] == 1 && !visited[j]) {
+                        visited[j] = 1;
+                        printf("%s", G->vexs[j]);
+                        EnQueue(&Q, j);
+                    }
+                }
+            }
+        }
+    }
+}
 void Prim(MGraph *G) {
     int i, j, k, min, lowcost[MAX], closest[MAX];
     for (i = 1; i < G->n; i++) {
@@ -163,24 +218,26 @@ void Floyd_Core(MGraph *G, int start, int end) {
     for (i = 0; i < G->n; i++) {
         for (j = 0; j < G->n; j++) {
             dist[i][j] = G->edges[i][j];
-            path[i][j] = -1;
+            path[i][j] = j;
         }
     }
     for (k = 0; k < G->n; k++) {
         for (i = 0; i < G->n; i++) {
             for (j = 0; j < G->n; j++) {
-                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                if ((dist[i][k] + dist[k][j]) < dist[i][j]) {
                     dist[i][j] = dist[i][k] + dist[k][j];
-                    path[i][j] = k;
+                    path[i][j] = path[i][k];
                 }
             }
         }
     }
-    for (i = 0; i < G->n; i++) {
-        for (j = 0; j < G->n; j++)
-            printf("-->%s", G->vexs[dist[i][j]]);
-        printf("\n");
+    printf("%s-->%s = %d\n", G->vexs[start], G->vexs[end], dist[start][end]);
+    printf("详细路径如下：\n");
+    while (start != end) {
+        printf("%s-->", G->vexs[start]);
+        start = path[start][end];
     }
+    printf("%s\n", G->vexs[end]);
 }
 void Floyd(MGraph *G) {
     int i, start, end;
@@ -195,7 +252,7 @@ void Floyd(MGraph *G) {
             end = i;
         }
     }
-    Floyd_Core(&G, start, end);
+    Floyd_Core(G, start, end);
 }
 void Menu() {
     printf("\n------------------------简易城市交通网--------------------------");
@@ -219,6 +276,7 @@ void main() {
     MGraph G;
     str st;
     int isContinue = 1;
+    CreateMGraph(&G);
     do {
         int selector;
         Menu();
@@ -236,9 +294,18 @@ void main() {
                 break;
             }
             case 4: {
+                int method;
+                printf("1.深度优先遍历\n");
+                printf("2.广度优先遍历\n");
+                printf("请选择遍历方式：");
+                scanf("%d", &method);
                 printf("请输入起点：");
                 scanf("%s", st);
-                DFS(&G, st);
+                if (method == 1)
+                    DFS(&G, st);
+                else {
+                    BFS(&G);
+                }
                 break;
             }
             case 5: {
