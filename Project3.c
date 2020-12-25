@@ -81,9 +81,27 @@ void DFS(MGraph *G, str vexs) {
         }
     }
 }
+void BFS_Core(MGraph *G, int i) {
+    int qu[MAX], front = 0, rear = 0, j;
+    visited[i] = 1;
+    printf("-->%s", G->vexs[i]);
+    rear = (rear + 1) % MAX;
+    qu[rear] = i;
+    while (front != rear) {
+        front = (front + 1) % MAX;
+        i = qu[front];
+        for (j = 0; j < G->n; j++) {
+            if (G->edges[i][j] != 0 && G->edges[i][j] != M && !visited[j]) {
+                visited[j] = 1;
+                printf("-->%s", G->vexs[j]);
+                rear = (rear + 1) % MAX;
+                qu[rear] = j;
+            }
+        }
+    }
+}
 void BFS(MGraph *G, str vexs) {
     int i;
-    int qu[MAX], front = 0, rear = 0;
     int start = 0;
     for (i = 0; i < G->n; i++) {
         visited[i] = 0;
@@ -94,20 +112,9 @@ void BFS(MGraph *G, str vexs) {
             break;
         }
     }
-    printf("-->%s", G->vexs[start]);
-    visited[start] = 1;
-    rear = (rear + 1) % MAX;
-    qu[rear] = start;
-    while (front != rear) {
-        front = (front + 1) % MAX;
-        start = qu[front];
-        for (i = 0; i < G->n; i++) {
-            if (G->edges[start][i] != 0 && G->edges[start][i] != M && !visited[i]) {
-                visited[i] = 1;
-                printf("-->%s", G->vexs[i]);
-                rear = (rear + 1) % MAX;
-                qu[rear] = i;
-            }
+    for (i = 0; i < G->n; i++) {
+        if (!visited[i]) {
+            BFS_Core(G, (start + i) % G->n);
         }
     }
 }
