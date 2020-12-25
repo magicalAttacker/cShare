@@ -81,57 +81,32 @@ void DFS(MGraph *G, str vexs) {
         }
     }
 }
-typedef struct {
-    int data[MAX];
-    int front;
-    int rear;
-} Queue;
-int InitQueue(Queue *Q) {
-    Q->front = 0;
-    Q->rear = 0;
-    return 1;
-}
-int QueueEmpty(Queue Q) {
-    if (Q.front == Q.rear)
-        return 1;
-    else
-        return 0;
-}
-int EnQueue(Queue * Q, int e) {
-    if ((Q->rear + 1) % MAX == Q->front)
-        return 0;
-    Q->data[Q->rear] = e;
-    Q->rear = (Q->rear + 1) % MAX;
-    return 1;
-}
-int DeQueue(Queue * Q, int *e) {
-    if (Q->front == Q->rear)
-        return 0;
-    *e = Q->data[Q->front];
-    Q->front = (Q->front+1) % MAX;
-    return 1;
-}
-void BFS(MGraph *G) {
-    int i,j;
-    Queue Q;
+void BFS(MGraph *G, str vexs) {
+    int i;
+    int qu[MAX], front = 0, rear = 0;
+    int start = 0;
     for (i = 0; i < G->n; i++) {
         visited[i] = 0;
     }
-    InitQueue(&Q);
     for (i = 0; i < G->n; i++) {
-        if (!visited[i]) {
-            visited[i] = 1;
-            printf("-->%s", G->vexs[i]);
-            EnQueue(&Q, i);
-            while (!QueueEmpty(Q)) {
-                DeQueue(&Q, &i);
-                for (j = 0; j < G->n; j++) {
-                    if (G->edges[i][j] == 1 && !visited[j]) {
-                        visited[j] = 1;
-                        printf("%s", G->vexs[j]);
-                        EnQueue(&Q, j);
-                    }
-                }
+        if (strcmp(vexs, G->vexs[i]) == 0) {
+            start = i;
+            break;
+        }
+    }
+    printf("-->%s", G->vexs[start]);
+    visited[start] = 1;
+    rear = (rear + 1) % MAX;
+    qu[rear] = start;
+    while (front != rear) {
+        front = (front + 1) % MAX;
+        start = qu[front];
+        for (i = 0; i < G->n; i++) {
+            if (G->edges[start][i] != 0 && G->edges[start][i] != M && !visited[i]) {
+                visited[i] = 1;
+                printf("-->%s", G->vexs[i]);
+                rear = (rear + 1) % MAX;
+                qu[rear] = i;
             }
         }
     }
@@ -304,7 +279,7 @@ void main() {
                 if (method == 1)
                     DFS(&G, st);
                 else {
-                    BFS(&G);
+                    BFS(&G, st);
                 }
                 break;
             }
